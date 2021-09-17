@@ -36,11 +36,11 @@ public class CounterLayer {
 		   {
 			   String success = null;
 			   try {
-			   for (int i=counter ; i<counter+5; counter++) {
-				   logger.info("the value push from counter >"+counter);
+			   for (int i=0 ; i<counter+5; i++) {
+				   logger.info("the value push from counter >"+i);
 				   RestTemplate restTemplate = new RestTemplate();
 				   String fooResourceUrl
-				     = env.getApp()+"/svc/push?counter="+counter;
+				     = env.getApp()+"/svc/push?counter="+i;
 				   ResponseEntity<String> response
 				     = restTemplate.getForEntity(fooResourceUrl, String.class);
 				   success = response.getBody();
