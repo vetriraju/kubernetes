@@ -1,6 +1,13 @@
 package docker.run.test;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -86,5 +93,77 @@ public class CounterLayer {
 			   }
 		   }
 		   
+		   
+		   @RequestMapping("/nfile/push")
+		   public String getFilePush(@RequestParam String counter)  
+		   {
+			   try {
+				   logger.info("the value push from data >"+counter);
+				   logger.info("the value retrieved from service >"+counter);
+				   String currentPath = new java.io.File(".").getCanonicalPath();
+				   logger.info("Current dir:" + currentPath);
+				   File fl = new File(currentPath+"/data/logs.txt");			   
+				   if (Files.notExists(Paths.get(currentPath+"/data/logs.txt")) ) {
+					   if(Files.notExists(Paths.get(currentPath+"/data"))) new File(currentPath+"/data").mkdirs();
+					   fl.createNewFile();
+					   logger.info("File created: " + fl.getName());
+				      } else {
+				    	  logger.info("File already exists.");
+				      }
+				   String str = "current time > "+ (new Date()).toString()+"\n";
+				   Files.write(Paths.get(currentPath+"/data/logs.txt"), str.getBytes(), StandardOpenOption.APPEND);
+				   FileReader fr = new FileReader(fl);
+				   int ch;
+				   String txt ="";
+				   while ((ch=fr.read())!=-1)
+					   txt += ""+((char)ch);
+				   logger.info("read text =====>"+txt);
+				   fr.close();
+				   return counter;
+			   } catch(Exception e) {
+				   logger.info("the Exception getDataPush >"+e.getMessage());
+				   logger.error("exception > ",e);
+				   return "Failed";
+			   }
+		   }
+		   
+		   @RequestMapping("/efile/push")
+		   public String geteFilePush(@RequestParam String counter)  
+		   {
+			   try {
+				   logger.info("the value push from data >"+counter);
+				   logger.info("the value retrieved from service >"+counter);
+				   String currentPath = new java.io.File(".").getCanonicalPath();
+				   logger.info("Current dir:" + currentPath);
+				   File fl = new File(currentPath+"/tmp/logs.txt");			   
+				   if (Files.notExists(Paths.get(currentPath+"/tmp/logs.txt")) ) {
+					   if(Files.notExists(Paths.get(currentPath+"/tmp"))) new File(currentPath+"/tmp").mkdirs();
+					   fl.createNewFile();
+					   logger.info("File created: " + fl.getName());
+				      } else {
+				    	  logger.info("File already exists.");
+				      }
+				   String str = "current time > "+ (new Date()).toString()+"\n";
+				   Files.write(Paths.get(currentPath+"/tmp/logs.txt"), str.getBytes(), StandardOpenOption.APPEND);
+				   FileReader fr = new FileReader(fl);
+				   int ch;
+				   String txt ="";
+				   while ((ch=fr.read())!=-1)
+					   txt += ""+((char)ch);
+				   logger.info("read text =====>"+txt);
+				   fr.close();
+				   return counter;
+			   } catch(Exception e) {
+				   logger.info("the Exception getDataPush >"+e.getMessage());
+				   logger.error("exception > ",e);
+				   return "Failed";
+			   }
+		   }
+		   
+		   public static void main(String args[]) {
+			   CounterLayer layer = new CounterLayer();
+			   logger.info("main method >");
+			   layer.getFilePush("main method");
+		   }
 		  
 }
