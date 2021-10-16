@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+        name: myjob
+spec:
+        completions: 2
+        parallelism: 1
+        backoffLimit: 3
+        activeDeadlineSeconds: 15
+        template:
+                metadata:
+                        name: podjob
+                        labels:
+                                app: podjob
+                spec:
+                        containers:
+                                - name: mycont
+                                  image: busybox
+                                  command: ["/bin/sh","-c","echo 'start job' && sleep 20 && echo 'end job' && exit 1"]
+                        restartPolicy: Never
+

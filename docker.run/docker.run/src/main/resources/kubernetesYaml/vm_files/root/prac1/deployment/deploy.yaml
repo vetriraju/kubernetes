@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+        name: mydep
+        labels:
+                app: dep
+spec:
+        replicas: 1
+        selector:
+                matchLabels:
+                        app: dep
+        template:
+                metadata:
+                        labels:
+                                app: dep
+                spec:
+                        containers:
+                                - name: mycont
+                                  image: nginx
+                                  ports:
+                                        - containerPort: 80
+                                  imagePullPolicy: IfNotPresent               
+                        restartPolicy: Always  

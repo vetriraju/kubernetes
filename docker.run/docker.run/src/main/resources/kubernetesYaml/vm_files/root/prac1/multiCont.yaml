@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+        name: mypod
+        labels:
+                app: mypod
+                itmAdded: label
+spec:
+        containers:
+                - name: mypod
+                  image: vetriraju/java:counter
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                          - containerPort: 8080
+                  env:
+                          - name: APP_SVC
+                            value: localhost:8081
+                          - name: DATA_SVC
+                            value: "val"
+                          - name: PORT
+                            value: "8080"
+                - name: mypod1
+                  image: vetriraju/java:counter
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                          - containerPort: 8081
+                  env:
+                          - name: APP_SVC
+                            value: localhost:SER1_SERVICE_PORT
+                          - name: DATA_SVC
+                            value: http://localhost:8082
+                          - name: PORT
+                            value: "8081"
+                - name: mypod2
+                  image: vetriraju/java:counter
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                          - containerPort: 8082
+                  env:
+                          - name: APP_SVC
+                            value: http://localhost:$(SER1_SERVICE_PORT)
+                          - name: DATA_SVC
+                            value: http://data1:$(DATA1_SERVICE_PORT)
+                          - name: PORT
+                            value: "8082"
+        restartPolicy: Never

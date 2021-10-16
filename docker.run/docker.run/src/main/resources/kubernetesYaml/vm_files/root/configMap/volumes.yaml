@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+        name: pod-data-tier
+        labels:
+                tier: data
+spec:
+        containers:
+                - name: mycont
+                  image: ubuntu
+                  volumeMounts:
+                          - mountPath: "/etc/dev"
+                            name: myvol
+        volumes:
+                - name: myvol
+                  configMap:
+                          name: myconfig
+                          items:
+                                  - key: conf
+                                    path: dev.conf
+

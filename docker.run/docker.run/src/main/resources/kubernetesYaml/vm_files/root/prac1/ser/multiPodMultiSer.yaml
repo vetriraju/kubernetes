@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+        name: ser
+        labels:
+                app: multi
+                tier: ser
+                type: ser
+spec:
+        ports:
+                - port: 81
+                  targetPort: 8080
+        selector:
+                tier: ser
+        type: NodePort
+---                          
+apiVersion: v1
+kind: Service
+metadata:
+        name: data
+        labels:
+                app: multi
+                tier: data
+                type: ser
+spec:
+        ports:
+                - port: 82
+                  targetPort: 8080
+        selector:
+                tier: data
+        type: NodePort
+---
+apiVersion: v1
+kind: Pod
+metadata:
+        name: serpod
+        labels:
+                tier: ser
+                type: pod
+spec:
+        containers:
+                - name: mypod
+                  image: vetriraju/java:counter
+                  ports:
+                          - containerPort: 8080
+                  env:
+                        - name: APP_SVC
+                          value: http://${SER_SERVICE_HOST}:${SER_SERVICE_PORT}
+                        - name: DATA_SVC
+                          value: http://${DATA_SERVICE_HOST}:${DATA_SERVICE_PORT}
+                        - name: PORT
+                          value: "8080"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+        name: datapod
+        labels:
+                app: multi
+                tier: data
+                type: pod
+spec:
+        containers:
+                - name: mypod
+                  image: vetriraju/java:counter
+                  ports:
+                          - containerPort: 8080
+                  env:
+                        - name: APP_SVC
+                          value: http://ser:${SER_SERVICE_PORT}
+                        - name: DATA_SVC
+                          value: http://${DATA_SERVICE_HOST}:${DATA_SERVICE_PORT}
+                        - name: PORT
+                          value: "8080"

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+        name: conf
+        labels:
+                app: myconf
+data:
+        country: india
+        state: tn
+        desc: |
+                india is my country
+                all indians are brother and sister

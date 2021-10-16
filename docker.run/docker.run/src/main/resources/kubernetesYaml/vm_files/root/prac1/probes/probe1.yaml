@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+        name: mypod
+        labels:
+                app: pod
+                tier: back
+spec:
+        containers:
+                - name: mypod
+                  image: vetriraju/java:counter
+                  ports:
+                          - containerPort: 8080
+                            name: nginxcont
+                  livenessProbe:
+                          tcpSocket:
+                                  port: nginxcont
+                          initialDelaySeconds: 25
+                  readinessProbe:
+                          httpGet:
+                                  path: "/data/push?counter=5"
+                                  port: nginxcont
+                          initialDelaySeconds: 20
+                  env:
+                          - name: "APP_SVC"
+                            value: "value"
+                          - name: "DATA_SVC"
+                            value: "value"
+                          - name: "PORT"
+                            value: "8080"

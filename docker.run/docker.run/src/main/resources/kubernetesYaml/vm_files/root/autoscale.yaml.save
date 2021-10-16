@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: Service
+metadata:
+        name: ser-data-tier
+        labels:
+                tier: svc-data
+spec:
+        ports:
+                - port: 8080
+        selector:
+                tier: data
+        type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+        name: pod-data-tier
+        labels:
+                tier: data
+spec:
+        replicas: 3
+        selector:
+                matchLabels:
+                        tier: data
+        template:
+                metadata:
+                        labels:
+                                tier: data
+                spec:
+                        containers:
+                                - name: mycont
+                                  image: vetriraju/java:counter
+                                  ports:
+                                          -  containerPort: 8080
+                                  env:
+                                        - name: DATA_SVC
+                                          value: datalink
+                                        - name: APP_SVC
+                   	                       value: applink
+---
+apiVersion: v1
+kind: Service
+metadata:
+        name: ser-app-tier
+        labels:
+                tier: svc-app-tier
+spec:
+        ports:
+                - port: 8080
+        selector:
+                app: app-tier
+        type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+        name: pod-app-tier
+        labels:
+                app: app-tier
+spec:
+        replicas: 1
+        selector:
+                matchLabels:
+                        app: app-tier
+        template:
+                metadata:
+                        labels:
+                                app: app-tier
+                spec:
+                        containers:
+                                - name: mycont
+                                  image: vetriraju/java:counter
+                                  ports:
+                                        - containerPort: 8080
+                                  env:
+                                        - name: DATA_SVC
+                                          value: http://$(SER_DATA_TIER_SERVICE_HOST):$(SER_DATA_TIER_SERVICE_PORT)
+                                        - name: APP_SVC
+                                          value: applink
+---
+apiVersion: v1
+kind: Service
+metadata:
+        name: ser-counter-tier
+        labels:
+                tier: svc-counter-tier
+spec:
+        ports:
+                - port: 8080
+        selector:
+                app: counter-tier
+        type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+        name: pod-counter-tier
+        labels:
+                app: counter-tier
+spec:
+        replicas: 1
+        selector:
+                matchLabels:
+                        app: counter-tier
+        template:
+                metadata:
+                        labels:
+                                app: counter-tier
+                spec:
+                        containers:
+                                - name: mycont
+                                  image: vetriraju/java:counter
+                                  ports:
+                                        - containerPort: 8080
+                                  env:
+                                        - name: DATA_SVC
+                                          value: http://$(SER_DATA_TIER_SERVICE_HOST):$(SER_DATA_TIER_SERVICE_PORT)
+                                        - name: APP_SVC
+                                          value: http://ser-app-tier.default:$(SER_DATA_TIER_SERVICE_PORT)

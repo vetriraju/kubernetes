@@ -1,0 +1,17 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: silver-pod
+spec:
+  containers:
+  - name: silver-pod
+    image: nginx
+    command: ["/bin/bash", "-c","echo 'india is kubernetes' > /data/india.txt && cat /data/india.txt && sleep 600"]
+    volumeMounts:
+      - name: nfs-pvc
+        mountPath: "/data"
+  restartPolicy: "Never"
+  volumes:
+    - name: nfs-pvc
+      persistentVolumeClaim:
+        claimName: silver-claim

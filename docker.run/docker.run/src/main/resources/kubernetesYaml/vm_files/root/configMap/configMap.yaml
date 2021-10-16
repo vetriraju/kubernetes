@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+        name: myconfig
+data:
+        ADD_SVC: "link"
+        DATA_SVC: "http://$(DATA_TIER_SERVICE_HOST):$(DATA_TIER_SERVICE_PORT)"
+        conf: | #for multi line value
+                app test1
+                tier data-tier
+

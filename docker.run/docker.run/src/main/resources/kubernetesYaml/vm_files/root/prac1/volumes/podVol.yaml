@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+        name: podvol
+        labels:
+                app: podvol
+spec:
+        containers:
+                - name: volpod
+                  image: vetriraju/java:counter
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                          - containerPort: 8080
+                            name: nginport
+                  env:
+                          - name: "APP_SVC"
+                            value: "value"
+                          - name: "DATA_SVC"
+                            value: "value"
+                          - name: "PORT"
+                            value: "8080"  
+                  livenessProbe:
+                          tcpSocket:
+                                  port: nginport
+                          initialDelaySeconds: 20
+                  readinessProbe:
+                          httpGet:
+                                  path: "/data/push?counter=5"
+                                  port: nginport
+                          initialDelaySeconds: 25
+                  volumeMounts:
+                          - mountPath: "/data"
+                            name: myvo
+        volumes:
+                - name: myvo
+                  persistentVolumeClaim:
+                        claimName: myvolclaim

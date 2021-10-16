@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+        name: myvolclaim
+        labels:
+                app: myvolclaim
+spec:
+        resources:
+                requests:
+                        storage: "250m"
+        accessModes:
+                - ReadWriteMany
+        volumeName: myvol

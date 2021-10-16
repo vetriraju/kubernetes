@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+        name: ser-data-tier
+        labels:
+                tier: svc-data
+spec:
+        ports:
+                - port: 8080
+        selector:
+                tier: data
+        type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+        name: pod-data-tier
+        labels:
+                tier: data
+spec:
+        replicas: 1
+        selector:
+                matchLabels:
+                        tier: data
+        template:
+                metadata:
+                        labels:
+                                tier: data
+                spec:
+                        containers:
+                                - name: mycont
+                                  image: vetriraju/java:counter
+                                  env:
+                                          - name: "APP_SVC"
+                                            value: "link"
+                                          - name: "DATA_SVC"
+                                            value: "link"
+                                  ports:
+                                          -  containerPort: 8080
+                                             name: redisxx
+                                  livenessProbe:
+                                          httpGet:
+                                                  port: redisxx
+                                                  path: "/hello"
+                                          initialDelaySeconds: 15
+                                  readinessProbe:
+                                          httpGet:
+                                                  port: redisxx
+                                                  path: "/hello"
+                                          initialDelaySeconds: 10
+                        initContainers:
+                                - name: myinit-containers
+                                  image: ubuntu:latest
+                                  env:
+                                          - name: "APP_SVC"
+                                            value: "link"
+                                          - name: "DATA_SVC"
+                                            value: "link"
+                                  command:
+                                          - echo
+                                          - "Good is not good for all"
+
+

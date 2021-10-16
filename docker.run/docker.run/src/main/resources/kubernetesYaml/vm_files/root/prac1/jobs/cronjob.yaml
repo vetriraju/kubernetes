@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+        name: mycron
+        labels:
+                app: cron
+spec:
+        schedule: "*/1 * * * *"
+        jobTemplate:
+                spec:
+                    completions: 1
+                    template:
+                        metadata:
+                                name: mypod
+                                labels:
+                                        app: jobpod
+                        spec:
+                                containers:
+                                        - name: mycont
+                                          image: nginx
+                                          ports:
+                                                  - containerPort: 8080
+                                          command: ["/bin/bash", "-c", "echo 'start job' && sleep 30 && echo 'end job'"]
+                                restartPolicy: Never
+
